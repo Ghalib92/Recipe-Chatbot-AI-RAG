@@ -1,29 +1,26 @@
-from langchain.document_loaders import PyPDFLoader, DirectoryLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings import HuggingFaceEmbeddings
+"""PDF loading, chunking and embedding helpers for the RAG pipeline."""
+
+from langchain_community.document_loaders import DirectoryLoader, PyPDFLoader
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
-#Extract Data From the PDF File
 def load_pdf_file(data):
-    loader= DirectoryLoader(data,
-                            glob="*.pdf",
-                            loader_cls=PyPDFLoader)
-
-    documents=loader.load()
-
-    return documents
+    """Load every PDF in a directory into LangChain documents."""
+    loader = DirectoryLoader(data, glob="*.pdf", loader_cls=PyPDFLoader)
+    return loader.load()
 
 
-
-#Split the Data into Text Chunks
 def text_split(extracted_data):
-    text_splitter=RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=20)
-    text_chunks=text_splitter.split_documents(extracted_data)
-    return text_chunks
+    """Split documents into overlapping chunks suited to recipe retrieval."""
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=600,
+        chunk_overlap=80,
+        separators=["\n\n", "\n", ".", " "],
+    )
+    return splitter.split_documents(extracted_data)
 
 
-
-#Download the Embeddings from HuggingFace 
 def download_hugging_face_embeddings():
-    embeddings=HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2')  #this model return 384 dimensions
-    return embeddings
+    """384-dimension sentence-transformer embeddings (matches the Pinecone index)."""
+    return HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")

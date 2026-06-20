@@ -1,11 +1,23 @@
-  sentence-transformers
-langchain
-django
-pypdf
-python-dotenv
-pinecone-client[grpc]
-langchain-pinecone
-langchain-community
-langchain-openai
-langchain-experimental
+# --- Web ---
+flask==3.1.0
+gunicorn==25.0.3
+python-dotenv==1.2.1
+
+# --- Chatbot (RAG: Pinecone + OpenAI via LangChain, HuggingFace embeddings) ---
+# Heavy (pulls in torch). The API boots without these; /api/chat reports 503
+# until they are installed and the keys/index are configured.
+langchain==0.3.27
+langchain-community==0.3.27
+langchain-openai==0.3.33
+langchain-pinecone==0.2.12
+langchain-huggingface==0.1.2
+langchain-text-splitters==0.3.8
+pinecone[grpc]==5.4.2
+sentence-transformers==3.4.1
+pypdf==5.1.0
+
+# --- Tests ---
+pytest==8.3.4
+
+# Local src/ package (RAG helpers)
 -e .
